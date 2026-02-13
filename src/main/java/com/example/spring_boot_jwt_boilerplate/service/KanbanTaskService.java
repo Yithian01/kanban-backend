@@ -76,4 +76,8 @@ public class KanbanTaskService {
     public List<KanbanTask> findByKanbanIdOrderByPositionAsc(Long boardId) {
         return kanbanTaskRepository.findByKanbanIdOrderByPositionAsc(boardId);
     }
+
+    public void deleteByKanbanId(Long boardId) {
+        kanbanTaskRepository.deleteByKanbanId(boardId);
+    }
 }

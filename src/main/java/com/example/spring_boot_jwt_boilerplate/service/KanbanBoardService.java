@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -95,5 +94,24 @@ public class KanbanBoardService {
                 .collect(Collectors.toList());
 
         return new BoardDetailResponse(board, sectionResponses);
+    }
+
+    /**
+     * 보드 삭제 (섹션 및 태스크 포함)
+     */
+    @Transactional
+    public void deleteBoard(Long boardId, String userEmail) {
+        KanbanBoard board = kanbanBoardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+
+        if (!board.getMember().getEmail().equals(userEmail)) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
+        }
+
+        kanbanTaskService.deleteByKanbanId(boardId);
+
+        kanbanSectionService.deleteByKanbanId(boardId);
+
+        kanbanBoardRepository.delete(board);
     }
 }

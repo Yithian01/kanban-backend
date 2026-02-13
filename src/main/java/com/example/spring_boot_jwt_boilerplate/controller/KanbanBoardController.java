@@ -61,4 +61,20 @@ public class KanbanBoardController {
         Long createdBoardId = kanbanBoardService.createBoard(request.getTitle(), userEmail);
         return ResponseEntity.ok(new ApiResponse<>(true, "보드가 생성되었습니다.", createdBoardId));
     }
+
+    /**
+     * 칸반 보드 삭제
+     * DELETE /api/kanban/boards/{boardId}
+     * @param boardId 삭제할 보드 ID
+     * @param userEmail JwtFilter -> SecurityContextHolder -> Principal
+     * @return void (성공 메시지만 전달)
+     */
+    @DeleteMapping("/boards/{boardId}")
+    public ResponseEntity<ApiResponse<Void>> deleteBoard(
+            @PathVariable Long boardId,
+            @AuthenticationPrincipal String userEmail) {
+
+        kanbanBoardService.deleteBoard(boardId, userEmail);
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
 }
