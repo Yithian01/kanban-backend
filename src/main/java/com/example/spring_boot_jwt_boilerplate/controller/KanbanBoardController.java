@@ -1,16 +1,14 @@
 package com.example.spring_boot_jwt_boilerplate.controller;
 
 import com.example.spring_boot_jwt_boilerplate.dto.common.ApiResponse;
+import com.example.spring_boot_jwt_boilerplate.dto.kanban.request.KanbanBoardCreateRequest;
 import com.example.spring_boot_jwt_boilerplate.dto.kanban.response.BoardDetailResponse;
 import com.example.spring_boot_jwt_boilerplate.dto.kanban.response.BoardListResponse;
 import com.example.spring_boot_jwt_boilerplate.service.KanbanBoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,7 +28,6 @@ public class KanbanBoardController {
     public ResponseEntity<ApiResponse<List<BoardListResponse>>> getMyBoards(
             @AuthenticationPrincipal String userEmail) {
         List<BoardListResponse> response = kanbanBoardService.getMyBoards(userEmail);
-
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
@@ -50,7 +47,18 @@ public class KanbanBoardController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
-
-
-
+    /**
+     * 새 칸반 보드 생성
+     * POST /api/kanban
+     * @param request   title 제목
+     * @param userEmail JwtFilter -> SecurityContextHolder -> Principal
+     * @return 보드 ID
+     */
+    @PostMapping
+    public ResponseEntity<ApiResponse<Long>> createBoard(
+            @RequestBody KanbanBoardCreateRequest request,
+            @AuthenticationPrincipal String userEmail) {
+        Long createdBoardId = kanbanBoardService.createBoard(request.getTitle(), userEmail);
+        return ResponseEntity.ok(new ApiResponse<>(true, "보드가 생성되었습니다.", createdBoardId));
+    }
 }
