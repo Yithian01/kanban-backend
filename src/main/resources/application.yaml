@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: spring-boot-jwt-boilerplate
+  config:
+    import: "optional:file:.env[.properties]"
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: 1000ms
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+logging:
+  config: classpath:logback-spring.xml
+  file:
+    path: ./logs
+  level:
+    root: INFO
+    com.example.spring_boot_jwt_boilerplate: DEBUG
+
+jwt:
+  secret: ${JWT_SECRET}
+  access-token-expiration: 60000    # 1분 (밀리초)
+  refresh-token-expiration: 3600000  # 1시간 (Redis 저장 및 검증용)
+
+server:
+  port: 8080
+
