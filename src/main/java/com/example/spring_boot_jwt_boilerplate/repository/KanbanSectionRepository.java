@@ -3,6 +3,7 @@ package com.example.spring_boot_jwt_boilerplate.repository;
 import com.example.spring_boot_jwt_boilerplate.domain.section.KanbanSection;
 import com.example.spring_boot_jwt_boilerplate.domain.task.KanbanTask;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -31,4 +32,12 @@ public interface KanbanSectionRepository extends JpaRepository<KanbanSection, Lo
             "FROM KanbanSection ks " +
             "WHERE ks.kanbanBoard.id = :kanbanId")
     Double findMaxPositionByKanbanId(@Param("kanbanId") Long kanbanId);
+
+    /**
+     * 해당 칸반에 속해있는 섹션 삭제
+     * @param boardId 삭제할 칸반
+     */
+    @Modifying
+    @Query("DELETE FROM KanbanSection s WHERE s.kanbanBoard.id = :boardId")
+    void deleteByKanbanId(@Param("boardId") Long boardId);
 }

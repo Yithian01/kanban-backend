@@ -3,6 +3,7 @@ package com.example.spring_boot_jwt_boilerplate.repository;
 import com.example.spring_boot_jwt_boilerplate.domain.section.KanbanSection;
 import com.example.spring_boot_jwt_boilerplate.domain.task.KanbanTask;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query; // Import 추가
 import org.springframework.data.repository.query.Param; // Import 추가
 
@@ -68,4 +69,12 @@ public interface KanbanTaskRepository extends JpaRepository<KanbanTask, Long> {
             "WHERE t.kanbanId = :boardId " +
             "ORDER BY t.position ASC")
     List<KanbanTask> findByKanbanIdOrderByPositionAsc(@Param("boardId") Long boardId);
+
+    /**
+     * 해당 칸반에 속해있는 태스크 삭제
+     * @param kanbanId 삭제할 칸반
+     */
+    @Modifying
+    @Query("DELETE FROM KanbanTask t WHERE t.kanbanId = :kanbanId")
+    void deleteByKanbanId(@Param("kanbanId") Long kanbanId);
 }

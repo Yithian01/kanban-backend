@@ -91,4 +91,8 @@ public class KanbanSectionService {
     public List<KanbanSection> findByKanbanIdOrderByPositionAsc(Long kanbanId) {
         return kanbanSectionRepository.findByKanbanBoardIdWithKanbanBoard(kanbanId);
     }
+
+    public void deleteByKanbanId(Long kanbanId) {
+        kanbanSectionRepository.deleteByKanbanId(kanbanId);
+    }
 }
