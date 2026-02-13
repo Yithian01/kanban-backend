@@ -72,6 +72,11 @@ public class KanbanSectionService {
         section.updateName(newName);
     }
 
+    /**
+     * 추가될 섹션의 위치를 반환합니다.
+     * @param kanbanId 섹션이 추가될 보드 ID
+     * @return 해당 칸반에 존재하는 섹션의 최대 + 1000 반환합니다.
+     */
     private Double nextPosition(Long kanbanId) {
         Double maxPosition = kanbanSectionRepository.findMaxPositionByKanbanId(kanbanId);
 
