@@ -58,8 +58,8 @@ public class KanbanTaskService {
 
     /**
      * 추가될 태스크의 위치를 반환합니다.
-     * @param sectionId 태스크가 추가될 색션 ID
-     * @return 해당 색션에 존재하는 태스크의 최대 + 1000 반환합니다.
+     * @param sectionId 태스크가 추가될 섹션 ID
+     * @return 해당 섹션에 존재하는 태스크의 최대 + 1000 반환합니다.
      */
     private Double nextTaskPosition(Long sectionId) {
         Double maxPosition = kanbanTaskRepository.findMaxPositionBySectionId(sectionId);

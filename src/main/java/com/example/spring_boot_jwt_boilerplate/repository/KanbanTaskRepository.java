@@ -48,8 +48,8 @@ public interface KanbanTaskRepository extends JpaRepository<KanbanTask, Long> {
     List<KanbanTask> findByKanbanIdWithSection(@Param("kanbanId") Long kanbanId);
 
     /**
-     * 특정 색션 내의 태스크 중 가장 큰 position 값을 조회합니다.
-     * @param sectionId 색션 ID
+     * 특정 섹션 내의 태스크 중 가장 큰 position 값을 조회합니다.
+     * @param sectionId 섹션 ID
      * @return 최대 position 값을 반환합니다.
      */
     @Query("SELECT MAX(kt.position) " +
