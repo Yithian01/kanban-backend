@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -35,7 +37,7 @@ public class KanbanTaskService {
      */
     @Transactional
     public Long createTask(Long kanbanBoardId, Long sectionId, Integer memberId, String title, String content) {
-        KanbanBoard kanbanBoard = kanbanBoardRepository.findById(kanbanBoardId)
+        kanbanBoardRepository.findById(kanbanBoardId)
                 .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 
         KanbanSection section = kanbanSectionRepository.findById(sectionId)
@@ -64,5 +66,14 @@ public class KanbanTaskService {
     private Double nextTaskPosition(Long sectionId) {
         Double maxPosition = kanbanTaskRepository.findMaxPositionBySectionId(sectionId);
         return (maxPosition == null) ? 1000.0 : maxPosition + 1000.0;
+    }
+
+    /**
+     * 상세 조회용 섹션 + 태스크 정보 같이 반환합니다.
+     * @param boardId 보드 ID
+     * @return 섹션 + 태스크 정보를 같이 반환합니다.
+     */
+    public List<KanbanTask> findByKanbanIdOrderByPositionAsc(Long boardId) {
+        return kanbanTaskRepository.findByKanbanIdOrderByPositionAsc(boardId);
     }
 }

@@ -1,0 +1,56 @@
+package com.example.spring_boot_jwt_boilerplate.controller;
+
+import com.example.spring_boot_jwt_boilerplate.dto.common.ApiResponse;
+import com.example.spring_boot_jwt_boilerplate.dto.kanban.response.BoardDetailResponse;
+import com.example.spring_boot_jwt_boilerplate.dto.kanban.response.BoardListResponse;
+import com.example.spring_boot_jwt_boilerplate.service.KanbanBoardService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/kanban")
+public class KanbanBoardController {
+
+    private final KanbanBoardService kanbanBoardService;
+
+    /**
+     * 계정의 칸반 프로젝트 정보를 반환합니다.
+     * @param userEmail JwtFilter -> SecurityContextHolder -> Principal
+     * @return 리스트로 반환합니다.
+     */
+    @GetMapping("/boards")
+    public ResponseEntity<ApiResponse<List<BoardListResponse>>> getMyBoards(
+            @AuthenticationPrincipal String userEmail) {
+        List<BoardListResponse> response = kanbanBoardService.getMyBoards(userEmail);
+
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    /**
+     * 보드 상세 조회 (섹션 및 태스크 포함)
+     * GET /api/kanban/boards/{boardId}
+     * @param boardId 보드 ID
+     * @param userEmail JwtFilter -> SecurityContextHolder -> Principal
+     * @return 리스트로 반환합니다.
+     */
+    @GetMapping("/boards/{boardId}")
+    public ResponseEntity<ApiResponse<BoardDetailResponse>> getBoardDetail(
+            @PathVariable Long boardId,
+            @AuthenticationPrincipal String userEmail) {
+
+        BoardDetailResponse response = kanbanBoardService.getBoardDetail(boardId, userEmail);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+
+
+
+}
