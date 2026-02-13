@@ -2,6 +2,9 @@ package com.example.spring_boot_jwt_boilerplate.service;
 
 import com.example.spring_boot_jwt_boilerplate.domain.kanban.KanbanBoard;
 import com.example.spring_boot_jwt_boilerplate.domain.section.KanbanSection;
+import com.example.spring_boot_jwt_boilerplate.exception.CustomException;
+import com.example.spring_boot_jwt_boilerplate.exception.ErrorCode;
+import com.example.spring_boot_jwt_boilerplate.repository.KanbanBoardRepository;
 import com.example.spring_boot_jwt_boilerplate.repository.KanbanSectionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +17,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class KanbanSectionService {
 
+    private final KanbanBoardRepository kanbanBoardRepository;
     private final KanbanSectionRepository kanbanSectionRepository;
 
     /**
@@ -34,5 +38,46 @@ public class KanbanSectionService {
 
             kanbanSectionRepository.save(section);
         }
+    }
+
+    /**
+     * 새로운 섹션을 수동으로 추가합니다.
+     * @param kanbanBoardId 대상 보드 ID
+     * @param name 섹션 이름
+     */
+    @Transactional
+    public Long addSection(Long kanbanBoardId, String name) {
+        KanbanBoard kanbanBoard = kanbanBoardRepository.findById(kanbanBoardId)
+                .orElseThrow(() ->  new CustomException(ErrorCode.BOARD_NOT_FOUND));
+
+        KanbanSection section = KanbanSection.builder()
+                .name(name)
+                .position(nextPosition(kanbanBoard.getId()))
+                .kanbanBoard(kanbanBoard)
+                .build();
+
+        return kanbanSectionRepository.save(section).getId();
+    }
+
+    /**
+     * 섹션의 이름을 변경합니다.
+     * @param sectionId 변경할 섹션 ID
+     * @param newName 변경할 섹션명
+     */
+    @Transactional
+    public void updateSectionName(Long sectionId, String newName) {
+        KanbanSection section = kanbanSectionRepository.findById(sectionId)
+                .orElseThrow(() ->  new CustomException(ErrorCode.SECTION_NOT_FOUND));
+
+        section.updateName(newName);
+    }
+
+    private Double nextPosition(Long kanbanId) {
+        Double maxPosition = kanbanSectionRepository.findMaxPositionByKanbanId(kanbanId);
+
+        if (maxPosition == null) {
+            return 1000.0;
+        }
+        return maxPosition + 1000;
     }
 }
