@@ -80,9 +80,6 @@ public class KanbanSectionService {
     private Double nextPosition(Long kanbanId) {
         Double maxPosition = kanbanSectionRepository.findMaxPositionByKanbanId(kanbanId);
 
-        if (maxPosition == null) {
-            return 1000.0;
-        }
-        return maxPosition + 1000;
+        return (maxPosition == null) ? 1000.0 : maxPosition + 1000.0;
     }
 }
