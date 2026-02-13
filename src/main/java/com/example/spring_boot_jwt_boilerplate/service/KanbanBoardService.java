@@ -2,6 +2,8 @@ package com.example.spring_boot_jwt_boilerplate.service;
 
 import com.example.spring_boot_jwt_boilerplate.domain.kanban.KanbanBoard;
 import com.example.spring_boot_jwt_boilerplate.domain.member.Member;
+import com.example.spring_boot_jwt_boilerplate.exception.CustomException;
+import com.example.spring_boot_jwt_boilerplate.exception.ErrorCode;
 import com.example.spring_boot_jwt_boilerplate.repository.KanbanBoardRepository;
 import com.example.spring_boot_jwt_boilerplate.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,11 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true) // 기본적으로 읽기 전용
+@Transactional(readOnly = true)
 public class KanbanBoardService {
 
-    private final KanbanBoardRepository kanbanBoardRepository;
     private final MemberRepository memberRepository;
+    private final KanbanBoardRepository kanbanBoardRepository;
+    private final KanbanSectionService kanbanSectionService;
 
     /**
      * 새로운 칸반 보드를 생성합니다.
@@ -24,7 +27,8 @@ public class KanbanBoardService {
      */
     @Transactional
     public Long createBoard(String title, String email) {
-        Member member = memberRepository.findByEmail(email).orElseGet(null);
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         KanbanBoard kanbanBoard = KanbanBoard.builder()
                 .title(title)
@@ -32,6 +36,7 @@ public class KanbanBoardService {
                 .build();
         kanbanBoardRepository.save(kanbanBoard);
 
+        kanbanSectionService.createDefaultSections(kanbanBoard);
         return kanbanBoard.getId();
     }
 }
