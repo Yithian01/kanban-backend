@@ -78,15 +78,10 @@ public class KanbanBoardService {
             throw new CustomException(ErrorCode.ACCESS_DENIED);
         }
 
+        List<KanbanSection> sections = kanbanSectionService.findByKanbanIdOrderByPositionAsc(boardId);
         List<KanbanTask> tasks = kanbanTaskService.findByKanbanIdOrderByPositionAsc(boardId);
 
-        List<KanbanSection> distinctSections = tasks.stream()
-                .map(KanbanTask::getKanbanSection)
-                .distinct()
-                .sorted(Comparator.comparingDouble(KanbanSection::getPosition))
-                .collect(Collectors.toList());
-
-        List<SectionResponse> sectionResponses = distinctSections.stream()
+        List<SectionResponse> sectionResponses = sections.stream()
                 .map(section -> {
                     SectionResponse sectionRes = new SectionResponse(section);
 
@@ -94,7 +89,6 @@ public class KanbanBoardService {
                             .filter(task -> task.getKanbanSection().getId().equals(section.getId()))
                             .map(TaskResponse::new)
                             .collect(Collectors.toList());
-
                     sectionRes.setTasks(tasksInSection);
                     return sectionRes;
                 })

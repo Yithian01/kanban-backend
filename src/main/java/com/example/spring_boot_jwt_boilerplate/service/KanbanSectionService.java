@@ -82,4 +82,13 @@ public class KanbanSectionService {
 
         return (maxPosition == null) ? 1000.0 : maxPosition + 1000.0;
     }
+
+    /**
+     * 보드 내에 존재하는 모든 세션을 반환합니다.
+     * @param kanbanId 가져올 섹션이 존재하는 보드 ID
+     * @return 해당 칸반에 존재하는 섹션을 반환합니다.
+     */
+    public List<KanbanSection> findByKanbanIdOrderByPositionAsc(Long kanbanId) {
+        return kanbanSectionRepository.findByKanbanBoardIdWithKanbanBoard(kanbanId);
+    }
 }
