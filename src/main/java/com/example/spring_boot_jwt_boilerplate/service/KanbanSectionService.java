@@ -41,22 +41,23 @@ public class KanbanSectionService {
     }
 
     /**
-     * 새로운 섹션을 수동으로 추가합니다.
-     * @param kanbanBoardId 대상 보드 ID
-     * @param name 섹션 이름
+     * 새로운 섹션을 수동으로 추가합니다. (사용자 검증 포함)
      */
     @Transactional
-    public Long addSection(Long kanbanBoardId, String name) {
-        KanbanBoard kanbanBoard = kanbanBoardRepository.findById(kanbanBoardId)
-                .orElseThrow(() ->  new CustomException(ErrorCode.BOARD_NOT_FOUND));
+    public void addSection(Long boardId, String name, String userEmail) {
+        KanbanBoard kanbanBoard = kanbanBoardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+
+        if (!kanbanBoard.getMember().getEmail().equals(userEmail)) {
+             throw new CustomException(ErrorCode.ACCESS_DENIED);
+        }
 
         KanbanSection section = KanbanSection.builder()
                 .name(name)
                 .position(nextPosition(kanbanBoard.getId()))
                 .kanbanBoard(kanbanBoard)
                 .build();
-
-        return kanbanSectionRepository.save(section).getId();
+        kanbanSectionRepository.save(section);
     }
 
     /**
