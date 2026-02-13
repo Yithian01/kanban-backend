@@ -1,11 +1,13 @@
 package com.example.spring_boot_jwt_boilerplate.service;
 
 import com.example.spring_boot_jwt_boilerplate.domain.kanban.KanbanBoard;
+import com.example.spring_boot_jwt_boilerplate.domain.member.Member;
 import com.example.spring_boot_jwt_boilerplate.domain.section.KanbanSection;
 import com.example.spring_boot_jwt_boilerplate.exception.CustomException;
 import com.example.spring_boot_jwt_boilerplate.exception.ErrorCode;
 import com.example.spring_boot_jwt_boilerplate.repository.KanbanBoardRepository;
 import com.example.spring_boot_jwt_boilerplate.repository.KanbanSectionRepository;
+import com.example.spring_boot_jwt_boilerplate.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,7 @@ public class KanbanSectionService {
 
     private final KanbanBoardRepository kanbanBoardRepository;
     private final KanbanSectionRepository kanbanSectionRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 새로운 칸반 보드가 생성될 때, 기본 섹션 3개(To Do, Doing, Done)를 자동 생성합니다.
@@ -93,7 +96,39 @@ public class KanbanSectionService {
         return kanbanSectionRepository.findByKanbanBoardIdWithKanbanBoard(kanbanId);
     }
 
+    /**
+     * 해당 칸반 ID를 가진 모든 섹션 삭제
+     * @param kanbanId 칸반 ID
+     */
     public void deleteByKanbanId(Long kanbanId) {
         kanbanSectionRepository.deleteByKanbanId(kanbanId);
+    }
+
+    /**
+     * 해당 칸반 삭제
+     * @param boardId 칸반 ID
+     * @param sectionId 삭제할 섹션 ID
+     * @param userEmail 유저 확인
+     */
+    @Transactional
+    public void deleteSection(Long boardId, Long sectionId, String userEmail) {
+        Member member = memberRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        KanbanBoard board = kanbanBoardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+
+        if (!board.getMember().getId().equals(member.getId())) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
+        }
+
+        KanbanSection section = kanbanSectionRepository.findById(sectionId)
+                .orElseThrow(() -> new CustomException(ErrorCode.SECTION_NOT_FOUND));
+
+        if (!section.getKanbanBoard().getId().equals(board.getId())) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
+        }
+
+        kanbanSectionRepository.delete(section);
     }
 }
