@@ -35,7 +35,15 @@ public enum ErrorCode {
 
     // JWT
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
-    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다.");
+    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
+
+    // KANBAN
+    BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 칸반입니다."),
+    SECTION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 섹션입니다."),
+    ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "유효하지 않은 접근입니다.");
+
+
+
 
     private final HttpStatus status;
     private final String message;

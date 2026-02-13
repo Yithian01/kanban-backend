@@ -20,4 +20,14 @@ public interface KanbanSectionRepository extends JpaRepository<KanbanSection, Lo
             "WHERE ks.kanbanBoard.id = :kanbanId " +
             "ORDER BY ks.position ASC")
     List<KanbanSection> findByKanbanBoardIdWithKanbanBoard(@Param("kanbanId") Long kanbanId);
+
+    /**
+     * 특정 보드 내의 섹션 중 가장 큰 position 값을 조회합니다.
+     * @param kanbanId 보드 ID
+     * @return 최대 position 값 (섹션이 없으면 null)
+     */
+    @Query("SELECT MAX(ks.position) " +
+            "FROM KanbanSection ks " +
+            "WHERE ks.kanbanBoard.id = :kanbanId")
+    Double findMaxPositionByKanbanId(@Param("kanbanId") Long kanbanId);
 }

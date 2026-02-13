@@ -1,5 +1,6 @@
 package com.example.spring_boot_jwt_boilerplate.repository;
 
+import com.example.spring_boot_jwt_boilerplate.domain.section.KanbanSection;
 import com.example.spring_boot_jwt_boilerplate.domain.task.KanbanTask;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query; // Import 추가
@@ -46,4 +47,25 @@ public interface KanbanTaskRepository extends JpaRepository<KanbanTask, Long> {
             "WHERE kt.kanbanId = :kanbanId " +
             "ORDER BY kt.position ASC")
     List<KanbanTask> findByKanbanIdWithSection(@Param("kanbanId") Long kanbanId);
+
+    /**
+     * 특정 섹션 내의 태스크 중 가장 큰 position 값을 조회합니다.
+     * @param sectionId 섹션 ID
+     * @return 최대 position 값을 반환합니다.
+     */
+    @Query("SELECT MAX(kt.position) " +
+            "FROM KanbanTask kt " +
+            "WHERE kt.kanbanSection.id = :sectionId")
+    Double findMaxPositionBySectionId(@Param("sectionId") Long sectionId);
+
+    /**
+     * 상세 조회용: 보드에 속한 모든 섹션을 위치순으로 조회
+     * @param boardId 보드 ID
+     * @return 보드에 속한 task list 반환합니다.
+     */
+    @Query("SELECT t FROM KanbanTask t " +
+            "JOIN FETCH t.kanbanSection s " +
+            "WHERE t.kanbanId = :boardId " +
+            "ORDER BY t.position ASC")
+    List<KanbanTask> findByKanbanIdOrderByPositionAsc(@Param("boardId") Long boardId);
 }

@@ -34,4 +34,8 @@ public class KanbanSection extends BaseTimeEntity {
         this.position = position;
         this.kanbanBoard = kanbanBoard;
     }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
 }
