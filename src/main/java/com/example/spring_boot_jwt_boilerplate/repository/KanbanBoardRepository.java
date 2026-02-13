@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface KanbanBoardRepository extends JpaRepository<KanbanBoard, Long> {
 
@@ -19,4 +20,10 @@ public interface KanbanBoardRepository extends JpaRepository<KanbanBoard, Long> 
             "JOIN FETCH kb.member " +
             "WHERE kb.member.id = :memberId")
     List<KanbanBoard> findByMemberIdWithMember(@Param("memberId") Long memberId);
+
+    /**
+     * member도 같이 가져와서 N+1 문제 해결
+     */
+    @Query("select kb from KanbanBoard kb join fetch kb.member where kb.id = :boardId")
+    Optional<KanbanBoard> findByIdWithMember(@Param("boardId") Long boardId);
 }

@@ -29,4 +29,19 @@ public class SectionController {
         kanbanSectionService.addSection(boardId, request.getName(), userEmail);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
+
+    /**
+     * 특정 섹션 삭제
+     * DELETE /api/kanban/boards/{boardId}/sections/{sectionId}
+     */
+    @DeleteMapping("/{boardId}/sections/{sectionId}")
+    public ResponseEntity<ApiResponse<Void>> deleteSection(
+            @PathVariable Long boardId,
+            @PathVariable Long sectionId,
+            @AuthenticationPrincipal String userEmail) {
+
+        kanbanSectionService.deleteSection(boardId, sectionId, userEmail);
+
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
 }
