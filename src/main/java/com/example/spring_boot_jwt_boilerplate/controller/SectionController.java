@@ -2,6 +2,7 @@ package com.example.spring_boot_jwt_boilerplate.controller;
 
 import com.example.spring_boot_jwt_boilerplate.dto.common.ApiResponse;
 import com.example.spring_boot_jwt_boilerplate.dto.section.CreateSectionRequest;
+import com.example.spring_boot_jwt_boilerplate.dto.section.UpdateSectionRequest;
 import com.example.spring_boot_jwt_boilerplate.service.KanbanSectionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,22 @@ public class SectionController {
             @AuthenticationPrincipal String userEmail) {
 
         kanbanSectionService.deleteSection(boardId, sectionId, userEmail);
+
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
+    /**
+     * 특정 섹션 이름 변경
+     * POST /api/kanban/boards/{boardId}/sections/{sectionId}
+     */
+    @PostMapping("/{boardId}/sections/{sectionId}")
+    public ResponseEntity<ApiResponse<Void>> updateSection(
+            @PathVariable Long boardId,
+            @PathVariable Long sectionId,
+            @RequestBody UpdateSectionRequest request,
+            @AuthenticationPrincipal String userEmail) {
+
+        kanbanSectionService.updateSectionName(boardId, sectionId, userEmail, request.getName());
 
         return ResponseEntity.ok(ApiResponse.success(null));
     }
