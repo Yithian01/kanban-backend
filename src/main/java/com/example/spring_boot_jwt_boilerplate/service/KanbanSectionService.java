@@ -65,13 +65,29 @@ public class KanbanSectionService {
 
     /**
      * 섹션의 이름을 변경합니다.
+     * @param boardId 변경할 섹션이 있는 칸반 보드
      * @param sectionId 변경할 섹션 ID
-     * @param newName 변경할 섹션명
+     * @param userEmail 요청이 들어온 멤버
+     * @param newName 변경할 섹션 이름
      */
     @Transactional
-    public void updateSectionName(Long sectionId, String newName) {
+    public void updateSectionName(Long boardId, Long sectionId, String userEmail, String newName) {
+        Member member = memberRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        KanbanBoard board = kanbanBoardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+
+        if (!board.getMember().getId().equals(member.getId())) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
+        }
+
         KanbanSection section = kanbanSectionRepository.findById(sectionId)
-                .orElseThrow(() ->  new CustomException(ErrorCode.SECTION_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.SECTION_NOT_FOUND));
+
+        if (!section.getKanbanBoard().getId().equals(board.getId())) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
+        }
 
         section.updateName(newName);
     }
