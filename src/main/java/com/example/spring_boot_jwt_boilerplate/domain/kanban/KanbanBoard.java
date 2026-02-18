@@ -3,10 +3,7 @@ package com.example.spring_boot_jwt_boilerplate.domain.kanban;
 import com.example.spring_boot_jwt_boilerplate.domain.common.BaseTimeEntity;
 import com.example.spring_boot_jwt_boilerplate.domain.member.Member;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "kanban_boards")
@@ -29,5 +26,9 @@ public class KanbanBoard extends BaseTimeEntity {
     public KanbanBoard(String title, Member member) {
         this.title = title;
         this.member = member;
+    }
+
+    public void renameTitle(String title) {
+        this.title = title;
     }
 }

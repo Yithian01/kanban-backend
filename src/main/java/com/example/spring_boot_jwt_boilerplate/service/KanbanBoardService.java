@@ -114,4 +114,20 @@ public class KanbanBoardService {
 
         kanbanBoardRepository.delete(board);
     }
+
+    /**
+     * 보드 이름 업데이트
+     */
+    @Transactional
+    public void updateBoard(Long boardId, String userEmail, String title) {
+        KanbanBoard board = kanbanBoardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+
+        if (!board.getMember().getEmail().equals(userEmail)) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
+        }
+
+        board.renameTitle(title);
+        kanbanBoardRepository.save(board);
+    }
 }

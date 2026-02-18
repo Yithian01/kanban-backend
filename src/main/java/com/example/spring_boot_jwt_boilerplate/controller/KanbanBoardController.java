@@ -2,6 +2,7 @@ package com.example.spring_boot_jwt_boilerplate.controller;
 
 import com.example.spring_boot_jwt_boilerplate.dto.common.ApiResponse;
 import com.example.spring_boot_jwt_boilerplate.dto.kanban.request.KanbanBoardCreateRequest;
+import com.example.spring_boot_jwt_boilerplate.dto.kanban.request.KanbanBoardRenameRequest;
 import com.example.spring_boot_jwt_boilerplate.dto.kanban.response.BoardDetailResponse;
 import com.example.spring_boot_jwt_boilerplate.dto.kanban.response.BoardListResponse;
 import com.example.spring_boot_jwt_boilerplate.service.KanbanBoardService;
@@ -75,6 +76,24 @@ public class KanbanBoardController {
             @AuthenticationPrincipal String userEmail) {
 
         kanbanBoardService.deleteBoard(boardId, userEmail);
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
+    /**
+     * 칸반 이름 변경
+     * POST /api/kanban/boards/{boardId}/rename
+     * @param boardId 삭제할 보드 ID
+     * @param userEmail JwtFilter -> SecurityContextHolder -> Principal
+     * @RequestBody request 바꿀 칸반 보드 이름
+     * @return void (성공 메시지만 전달)
+     */
+    @DeleteMapping("/boards/{boardId}/rename")
+    public ResponseEntity<ApiResponse<Void>> renameBoard(
+            @PathVariable Long boardId,
+            @RequestBody KanbanBoardRenameRequest request,
+            @AuthenticationPrincipal String userEmail) {
+
+        kanbanBoardService.updateBoard(boardId, userEmail, request.getTitle());
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 }
