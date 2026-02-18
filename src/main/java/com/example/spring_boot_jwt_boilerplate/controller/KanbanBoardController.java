@@ -87,7 +87,7 @@ public class KanbanBoardController {
      * @RequestBody request 바꿀 칸반 보드 이름
      * @return void (성공 메시지만 전달)
      */
-    @DeleteMapping("/boards/{boardId}/rename")
+    @PostMapping("/boards/{boardId}/rename")
     public ResponseEntity<ApiResponse<Void>> renameBoard(
             @PathVariable Long boardId,
             @RequestBody KanbanBoardRenameRequest request,
