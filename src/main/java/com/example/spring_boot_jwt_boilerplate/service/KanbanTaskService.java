@@ -28,34 +28,33 @@ public class KanbanTaskService {
 
     /**
      * 특정 섹션에 새로운 태스크를 생성합니다.
-     * @param kanbanBoardId 생성할 보드 ID
+     * @param boardId 생성할 보드 ID
      * @param sectionId 생성할 섹션 ID
-     * @param memberId 멤버 ID
+     * @param userEmail 멤버 email
      * @param title 태스크명
      * @param content 태스크 설명
-     * @return 반환 여부
      */
     @Transactional
-    public Long createTask(Long kanbanBoardId, Long sectionId, Integer memberId, String title, String content) {
-        kanbanBoardRepository.findById(kanbanBoardId)
+    public void createTask(Long boardId, Long sectionId, String userEmail, String title, String content) {
+        KanbanBoard board = kanbanBoardRepository.findById(boardId)
                 .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 
         KanbanSection section = kanbanSectionRepository.findById(sectionId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SECTION_NOT_FOUND));
 
-        Member member = memberRepository.findById(memberId)
+        Member member = memberRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         KanbanTask task = KanbanTask.builder()
                 .title(title)
                 .content(content)
                 .kanbanSection(section)
-                .kanbanId(kanbanBoardId)
+                .kanbanId(board.getId())
                 .member(member)
                 .position(nextTaskPosition(sectionId))
                 .build();
 
-        return kanbanTaskRepository.save(task).getId();
+       kanbanTaskRepository.save(task);
     }
 
     /**

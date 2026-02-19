@@ -47,3 +47,35 @@ feat: 작업(Task) 생성 API 구현
 - TaskService 내 비즈니스 로직 구현
 - DTO 유효성 검증 로직 추가
 ```
+
+# 5. 📋 Pull Request Template 가이드
+
+PR 작성 시 아래 양식을 복사하여 내용을 채워주세요.
+
+```markdown
+## 🚀 작업 내용
+- 핵심 작업 내용을 간결하게 작성 (예: 칸반 보드 이름 수정 API 연결)
+
+## 💡 변경 사항
+- **Frontend**: `EditableBoardName` 컴포넌트 추가 및 더블 클릭 편집 로직 구현
+- **Backend**: `renameBoard` 엔드포인트 메서드 변경 (DELETE -> POST)
+
+## 💻 관련 코드
+// FE 예시
+const handleUpdate = async () => {
+  await renameBoard(boardId, trimmedValue);
+  onUpdateSuccess?.();
+};
+
+// BE 예시
+@PostMapping("/boards/{boardId}/rename")
+public ResponseEntity<ApiResponse<Void>> renameBoard(...) {
+    kanbanBoardService.updateBoard(boardId, userEmail, request.getTitle());
+    return ResponseEntity.ok(ApiResponse.success(null));
+}
+
+## ✅ 체크리스트
+- [ ] 요구 기능이 정상 동작하는가?
+- [ ] API 메서드 및 엔드포인트가 일치하는가?
+- [ ] UI에 변경 사항이 즉시 반영되는가?
+```
