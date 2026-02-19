@@ -29,4 +29,20 @@ public class KanbanTaskController {
         kanbanTaskService.createTask(boardId, sectionId, userEmail, request.getTitle(), request.getContent());
         return ResponseEntity.ok(ApiResponse.success(null));
     }
+
+    /**
+     * 특정 태스크 삭제
+     * DELETE /api/kanban/boards/{boardId}/sections/{sectionId}/tasks/{taskId}
+     */
+    @DeleteMapping("/{boardId}/sections/{sectionId}/tasks/{taskId}")
+    public ResponseEntity<ApiResponse<Void>> deleteTask(
+            @PathVariable("boardId") Long boardId,
+            @PathVariable("sectionId") Long sectionId,
+            @PathVariable("taskId") Long taskId,
+            @AuthenticationPrincipal String userEmail) {
+
+        kanbanTaskService.deleteTask(boardId, sectionId, taskId, userEmail);
+
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
 }

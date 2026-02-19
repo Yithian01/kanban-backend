@@ -11,6 +11,7 @@ import com.example.spring_boot_jwt_boilerplate.repository.KanbanSectionRepositor
 import com.example.spring_boot_jwt_boilerplate.repository.KanbanTaskRepository;
 import com.example.spring_boot_jwt_boilerplate.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.stream.Task;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,7 +77,41 @@ public class KanbanTaskService {
         return kanbanTaskRepository.findByKanbanIdOrderByPositionAsc(boardId);
     }
 
+    /**
+     * 해당 되는 보드 내부의 모든 태스크를 삭제합니다.
+     * @param boardId 삭제할 보드 ID
+     */
     public void deleteByKanbanId(Long boardId) {
         kanbanTaskRepository.deleteByKanbanId(boardId);
     }
+
+    /**
+     * 해당 태스크 카드 삭제
+     * @param boardId 어떤 보드
+     * @param sectionId 어떤 섹션
+     * @param taskId 어떤 태스크
+     * @param userEmail 어떤 유저
+     */
+    @Transactional
+    public void deleteTask(Long boardId, Long sectionId, Long taskId, String userEmail) {
+        KanbanBoard board = kanbanBoardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+
+        KanbanSection section = kanbanSectionRepository.findById(sectionId)
+                .orElseThrow(() -> new CustomException(ErrorCode.SECTION_NOT_FOUND));
+
+        if (!section.getKanbanBoard().getId().equals(boardId)) {
+            throw new CustomException(ErrorCode.INVALID_SECTION_LOCATION);
+        }
+
+        KanbanTask task = kanbanTaskRepository.findById(taskId)
+                .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
+
+        if (!task.getKanbanSection().getId().equals(sectionId)) {
+            throw new CustomException(ErrorCode.INVALID_TASK_LOCATION);
+        }
+
+        kanbanTaskRepository.delete(task);
+    }
+
 }

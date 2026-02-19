@@ -7,11 +7,13 @@ import lombok.Getter;
 public class TaskResponse {
     private Long taskId;
     private String title;
+    private String content;
     private Double position;
 
     public TaskResponse(KanbanTask task) {
         this.taskId = task.getId();
         this.title = task.getTitle();
+        this.content = task.getContent();
         this.position = task.getPosition();
     }
 }

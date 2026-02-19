@@ -40,8 +40,10 @@ public enum ErrorCode {
     // KANBAN
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 칸반입니다."),
     SECTION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 섹션입니다."),
-    ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "유효하지 않은 접근입니다.");
-
+    ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "유효하지 않은 접근입니다."),
+    INVALID_SECTION_LOCATION(HttpStatus.UNAUTHORIZED, "권한이 없습니다."),
+    TASK_NOT_FOUND(HttpStatus.UNAUTHORIZED, "권한이 없습니다."),
+    INVALID_TASK_LOCATION(HttpStatus.UNAUTHORIZED, "권한이 없습니다.");
 
 
 

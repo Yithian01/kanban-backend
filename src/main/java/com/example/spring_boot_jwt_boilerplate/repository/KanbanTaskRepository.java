@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query; // Import 추가
 import org.springframework.data.repository.query.Param; // Import 추가
 
 import java.util.List;
+import java.util.Optional;
 
 public interface KanbanTaskRepository extends JpaRepository<KanbanTask, Long> {
 
@@ -77,4 +78,15 @@ public interface KanbanTaskRepository extends JpaRepository<KanbanTask, Long> {
     @Modifying
     @Query("DELETE FROM KanbanTask t WHERE t.kanbanId = :kanbanId")
     void deleteByKanbanId(@Param("kanbanId") Long kanbanId);
+
+    /**
+     * 단건 조회용: 특정 태스크를 섹션 및 멤버 정보와 함께 한 번에 조회합니다 (N+1 방지)
+     * @param taskId 태스크 ID
+     * @return 연관 엔티티가 페치 조인된 태스크 객체
+     */
+    @Query("SELECT kt FROM KanbanTask kt " +
+            "JOIN FETCH kt.kanbanSection " +
+            "JOIN FETCH kt.member " +
+            "WHERE kt.id = :taskId")
+    Optional<KanbanTask> findByIdWithAllRelations(@Param("taskId") Long taskId);
 }
