@@ -2,6 +2,7 @@ package com.example.spring_boot_jwt_boilerplate.controller;
 
 import com.example.spring_boot_jwt_boilerplate.dto.common.ApiResponse;
 import com.example.spring_boot_jwt_boilerplate.dto.section.CreateSectionRequest;
+import com.example.spring_boot_jwt_boilerplate.dto.section.UpdateSectionPositionRequest;
 import com.example.spring_boot_jwt_boilerplate.dto.section.UpdateSectionRequest;
 import com.example.spring_boot_jwt_boilerplate.service.KanbanSectionService;
 import lombok.RequiredArgsConstructor;
@@ -59,6 +60,20 @@ public class KanbanSectionController {
 
         kanbanSectionService.updateSectionName(boardId, sectionId, userEmail, request.getName());
 
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
+    /**
+     * 특정 섹션 위치 변경
+     */
+    @PostMapping("/{boardId}/sections/{sectionId}/position")
+    public ResponseEntity<ApiResponse<Void>> updateSectionPosition(
+            @PathVariable("boardId") Long boardId,
+            @PathVariable("sectionId") Long sectionId,
+            @RequestBody UpdateSectionPositionRequest request,
+            @AuthenticationPrincipal String userEmail) {
+
+        kanbanSectionService.updateSectionPosition(boardId, sectionId, userEmail, request.getTargetIndex());
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 }

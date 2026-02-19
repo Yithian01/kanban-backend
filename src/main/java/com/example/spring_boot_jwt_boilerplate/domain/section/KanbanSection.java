@@ -38,4 +38,8 @@ public class KanbanSection extends BaseTimeEntity {
     public void updateName(String name) {
         this.name = name;
     }
+
+    public void updatePosition(Double newPosition) {
+        this.position = newPosition;
+    }
 }
