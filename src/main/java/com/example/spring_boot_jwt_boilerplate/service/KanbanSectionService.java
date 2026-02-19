@@ -7,6 +7,7 @@ import com.example.spring_boot_jwt_boilerplate.exception.CustomException;
 import com.example.spring_boot_jwt_boilerplate.exception.ErrorCode;
 import com.example.spring_boot_jwt_boilerplate.repository.KanbanBoardRepository;
 import com.example.spring_boot_jwt_boilerplate.repository.KanbanSectionRepository;
+import com.example.spring_boot_jwt_boilerplate.repository.KanbanTaskRepository;
 import com.example.spring_boot_jwt_boilerplate.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class KanbanSectionService {
 
     private final KanbanBoardRepository kanbanBoardRepository;
     private final KanbanSectionRepository kanbanSectionRepository;
+    private final KanbanTaskRepository kanbanTaskRepository;
     private final MemberRepository memberRepository;
 
     /**
@@ -145,6 +147,7 @@ public class KanbanSectionService {
             throw new CustomException(ErrorCode.ACCESS_DENIED);
         }
 
+        kanbanTaskRepository.deleteBySectionId(section.getId());
         kanbanSectionRepository.delete(section);
     }
 

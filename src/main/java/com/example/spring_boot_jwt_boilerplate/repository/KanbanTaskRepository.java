@@ -89,4 +89,12 @@ public interface KanbanTaskRepository extends JpaRepository<KanbanTask, Long> {
             "JOIN FETCH kt.member " +
             "WHERE kt.id = :taskId")
     Optional<KanbanTask> findByIdWithAllRelations(@Param("taskId") Long taskId);
+
+    /**
+     * 해당 섹션에 속해있는 태스크 전체 삭제
+     * @param sectionId 삭제할 섹션 ID
+     */
+    @Modifying
+    @Query("DELETE FROM KanbanTask kt WHERE kt.kanbanSection.id = :sectionId")
+    void deleteBySectionId(@Param("sectionId") Long sectionId);
 }
