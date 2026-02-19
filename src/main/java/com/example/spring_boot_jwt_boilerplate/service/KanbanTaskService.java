@@ -144,4 +144,48 @@ public class KanbanTaskService {
         task.update(title, content);
     }
 
+    /**
+     * 태스크를 섹션과 순서를 재조정
+     * @param boardId 어떤 보드의
+     * @param taskId 어떤 태스크를
+     * @param targetSectionId 어떤 섹션의
+     * @param targetIndex 어떤 순서로
+     * @param userEmail 멤버 email
+     */
+    @Transactional
+    public void moveTask(Long boardId, Long taskId, Long targetSectionId, Long targetIndex, String userEmail) {
+        kanbanBoardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+
+        Member member = memberRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        KanbanTask task = kanbanTaskRepository.findById(taskId)
+                .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
+
+        KanbanSection targetSection = kanbanSectionRepository.findById(targetSectionId)
+                .orElseThrow(() -> new CustomException(ErrorCode.SECTION_NOT_FOUND));
+
+        if (!targetSection.getKanbanBoard().getId().equals(boardId)) {
+            throw new CustomException(ErrorCode.INVALID_SECTION_LOCATION);
+        }
+        if (!targetSection.getKanbanBoard().getMember().equals(member)) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
+        }
+
+        if (!task.getKanbanSection().getId().equals(targetSectionId)) {
+            task.updateSection(targetSection);
+        }
+
+        List<KanbanTask> tasksInTargetSection = kanbanTaskRepository
+                .findByKanbanSectionIdWithSection(targetSectionId);
+
+        tasksInTargetSection.remove(task);
+        int targetIdx = Math.max(0, Math.min(targetIndex.intValue(), tasksInTargetSection.size()));
+        tasksInTargetSection.add(targetIdx, task);
+
+        for (int i = 0; i < tasksInTargetSection.size(); i++) {
+            tasksInTargetSection.get(i).updatePosition((double) (i + 1) * 1000);
+        }
+    }
 }

@@ -55,4 +55,12 @@ public class KanbanTask extends BaseTimeEntity {
         }
         this.content = content;
     }
+
+    public void updateSection(KanbanSection targetSection) {
+        this.kanbanSection = targetSection;
+    }
+
+    public void updatePosition(double newPosition) {
+        this.position = newPosition;
+    }
 }

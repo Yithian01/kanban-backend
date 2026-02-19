@@ -2,7 +2,7 @@ package com.example.spring_boot_jwt_boilerplate.controller;
 
 import com.example.spring_boot_jwt_boilerplate.dto.common.ApiResponse;
 import com.example.spring_boot_jwt_boilerplate.dto.section.CreateSectionRequest;
-import com.example.spring_boot_jwt_boilerplate.dto.section.UpdateSectionPositionRequest;
+import com.example.spring_boot_jwt_boilerplate.dto.section.MoveSectionRequest;
 import com.example.spring_boot_jwt_boilerplate.dto.section.UpdateSectionRequest;
 import com.example.spring_boot_jwt_boilerplate.service.KanbanSectionService;
 import lombok.RequiredArgsConstructor;
@@ -70,7 +70,7 @@ public class KanbanSectionController {
     public ResponseEntity<ApiResponse<Void>> updateSectionPosition(
             @PathVariable("boardId") Long boardId,
             @PathVariable("sectionId") Long sectionId,
-            @RequestBody UpdateSectionPositionRequest request,
+            @RequestBody MoveSectionRequest request,
             @AuthenticationPrincipal String userEmail) {
 
         kanbanSectionService.updateSectionPosition(boardId, sectionId, userEmail, request.getTargetIndex());
