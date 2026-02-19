@@ -48,4 +48,11 @@ public class KanbanTask extends BaseTimeEntity {
         this.kanbanId = kanbanId;
         this.member = member;
     }
+
+    public void update(String title, String content) {
+        if (title != null && !title.isBlank()) {
+            this.title = title;
+        }
+        this.content = content;
+    }
 }
