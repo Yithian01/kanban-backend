@@ -2,6 +2,7 @@ package com.example.spring_boot_jwt_boilerplate.controller;
 
 import com.example.spring_boot_jwt_boilerplate.dto.common.ApiResponse;
 import com.example.spring_boot_jwt_boilerplate.dto.task.CreateTaskRequest;
+import com.example.spring_boot_jwt_boilerplate.dto.task.MoveTaskRequest;
 import com.example.spring_boot_jwt_boilerplate.dto.task.UpdateTaskRequest;
 import com.example.spring_boot_jwt_boilerplate.service.KanbanTaskService;
 import lombok.RequiredArgsConstructor;
@@ -60,6 +61,21 @@ public class KanbanTaskController {
             @AuthenticationPrincipal String userEmail) {
 
         kanbanTaskService.updateSectionName(boardId, sectionId, taskId, userEmail, request.getTitle(), request.getContent());
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
+    /**
+     * 태스크 위치 및 섹션 변경
+     * POST /api/kanban/boards/{boardId}/tasks/{taskId}/move
+     */
+    @PostMapping("/{boardId}/tasks/{taskId}/move")
+    public ResponseEntity<ApiResponse<Void>> moveTask(
+            @PathVariable Long boardId,
+            @PathVariable Long taskId,
+            @RequestBody MoveTaskRequest request,
+            @AuthenticationPrincipal String userEmail) {
+
+        kanbanTaskService.moveTask(boardId, taskId, request.getTargetSectionId(), request.getTargetIndex(), userEmail);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 }

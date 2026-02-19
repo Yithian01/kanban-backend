@@ -5,6 +5,6 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class UpdateSectionPositionRequest {
+public class MoveSectionRequest {
     private Long targetIndex;
 }
