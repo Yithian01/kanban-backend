@@ -94,7 +94,7 @@ public class KanbanTaskService {
      */
     @Transactional
     public void deleteTask(Long boardId, Long sectionId, Long taskId, String userEmail) {
-        KanbanBoard board = kanbanBoardRepository.findById(boardId)
+        kanbanBoardRepository.findById(boardId)
                 .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 
         KanbanSection section = kanbanSectionRepository.findById(sectionId)
@@ -112,6 +112,36 @@ public class KanbanTaskService {
         }
 
         kanbanTaskRepository.delete(task);
+    }
+
+    /**
+     * 특정 태스크를 수정합니다.
+     * @param boardId 수정할 보드 ID
+     * @param sectionId 수정할 섹션 ID
+     * @param userEmail 멤버 email
+     * @param title 수정할 태스크명
+     * @param content 수정할 태스크 설명
+     */
+    @Transactional
+    public void updateSectionName(Long boardId, Long sectionId,  Long taskId, String userEmail, String title, String content) {
+        kanbanBoardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+
+        KanbanSection section = kanbanSectionRepository.findById(sectionId)
+                .orElseThrow(() -> new CustomException(ErrorCode.SECTION_NOT_FOUND));
+
+        if (!section.getKanbanBoard().getId().equals(boardId)) {
+            throw new CustomException(ErrorCode.INVALID_SECTION_LOCATION);
+        }
+
+        KanbanTask task = kanbanTaskRepository.findById(taskId)
+                .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
+
+        if (!task.getKanbanSection().getId().equals(sectionId)) {
+            throw new CustomException(ErrorCode.INVALID_TASK_LOCATION);
+        }
+
+        task.update(title, content);
     }
 
 }
