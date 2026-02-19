@@ -147,4 +147,34 @@ public class KanbanSectionService {
 
         kanbanSectionRepository.delete(section);
     }
+
+    @Transactional
+    public void updateSectionPosition(Long boardId, Long sectionId, String userEmail, Long targetIndex) {
+
+        Member member = memberRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        KanbanBoard board = kanbanBoardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+
+        if (!board.getMember().getId().equals(member.getId())) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
+        }
+
+        List<KanbanSection> sections = kanbanSectionRepository.findByKanbanBoardIdWithKanbanBoard(boardId);
+
+        KanbanSection movingSection = sections.stream()
+                .filter(s -> s.getId().equals(sectionId))
+                .findFirst()
+                .orElseThrow(() -> new CustomException(ErrorCode.SECTION_NOT_FOUND));
+
+        sections.remove(movingSection);
+
+        int targetIdx = Math.max(0, Math.min(targetIndex.intValue(), sections.size()));
+        sections.add(targetIdx, movingSection);
+
+        for (int i = 0; i < sections.size(); i++) {
+            sections.get(i).updatePosition((double) (i + 1) * 1000);
+        }
+    }
 }
