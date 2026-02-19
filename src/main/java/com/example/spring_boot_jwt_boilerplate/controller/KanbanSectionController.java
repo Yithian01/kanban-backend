@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/kanban/boards") // 기존 경로와 일관성 유지
-public class SectionController {
+@RequestMapping("/api/kanban/boards")
+public class KanbanSectionController {
 
     private final KanbanSectionService kanbanSectionService;
 
